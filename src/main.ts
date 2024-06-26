@@ -1,26 +1,46 @@
-import * as core from '@actions/core'
-import { wait } from './wait'
+import * as core from "@actions/core";
+import * as github from "@actions/github";
+import axios from "axios";
+import Papa from "papaparse";
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-export async function run(): Promise<void> {
+export default async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const token = core.getInput("token", { required: true });
+    const entName = core.getInput("ent_name", { required: true });
+    const filePath = core.getInput("file_path", { required: true });
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const octokit = github.getOctokit(token);
 
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const apiUrl = `https://api.github.com/enterprises/${entName}/copilot/billing/seats`;
+    const response = await axios.get(apiUrl, {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    });
 
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    if (response.data === undefined) {
+      core.setFailed("Error: Fetched data is undefined. Cannot generate CSV.");
+      return;
+    }
+
+    try {
+      const csv = Papa.unparse(response.data);
+      const fs = require("fs");
+      fs.writeFileSync(filePath, csv);
+
+      core.setOutput("csv_path", filePath);
+      console.log(`CSV generated at: ${filePath}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        core.setFailed(`Error parsing data to CSV: ${error.message}`);
+      } else {
+        // Handle the case where error is not an Error object
+        core.setFailed(`Error parsing data to CSV: ${error}`);
+      }
+    }
   } catch (error) {
-    // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    core.setFailed(`Action failed with error: ${error}`);
   }
 }
+
+run();
