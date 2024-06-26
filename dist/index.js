@@ -31081,6 +31081,7 @@ async function run() {
             return;
         }
         try {
+            console.log(response.data);
             const csv = papaparse_1.default.unparse(response.data);
             fs_1.default.writeFileSync(filePath, csv);
             core.setOutput('csv_path', filePath);
