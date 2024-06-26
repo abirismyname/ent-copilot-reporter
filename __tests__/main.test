@@ -1,0 +1,53 @@
+import { run } from '../src/main'
+import * as core from '@actions/core'
+import axios from 'axios'
+import Papa from 'papaparse'
+import fs from 'fs'
+
+// Mock the modules
+jest.mock('@actions/core')
+jest.mock('axios')
+jest.mock('papaparse')
+jest.mock('fs', () => ({
+  writeFileSync: jest.fn()
+}))
+
+describe('run function', () => {
+  beforeEach(() => {
+    // Clear all mocks before each test
+    jest.clearAllMocks()
+  })
+
+  it('successfully generates CSV', async () => {
+    // Mocking axios to return a successful response
+    ;(axios.get as jest.Mock).mockResolvedValue({
+      data: [{ seat: 'test', usage: 100 }]
+    })
+
+    // Mocking core functions
+    ;(core.getInput as jest.Mock).mockImplementation(inputName => {
+      if (inputName === 'token') return 'test-token'
+      if (inputName === 'ent_name') return 'test-enterprise'
+      if (inputName === 'file_path') return '/path/to/csv'
+    })
+
+    // Mocking Papa.parse to return a CSV string
+    ;(Papa.unparse as jest.Mock).mockReturnValue('seat,usage\ntest,100')
+
+    await run()
+
+    expect(axios.get).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'https://api.github.com/enterprises/test-enterprise/copilot/billing/seats'
+      ),
+      expect.anything()
+    )
+    expect(fs.writeFileSync).toHaveBeenCalledWith(
+      '/path/to/csv',
+      'seat,usage\ntest,100'
+    )
+    expect(core.setOutput).toHaveBeenCalledWith('csv_path', '/path/to/csv')
+  })
+
+  // Additional tests for error handling can be added here
+})
