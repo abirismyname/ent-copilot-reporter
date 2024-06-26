@@ -1,24 +1,18 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
-
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
-
-# Define your inputs here.
+name: 'Generate CSV Report'
+description: 'Generates a CSV report from GitHub API data.'
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  token:
+    description: 'GitHub token for authentication.'
     required: true
-    default: '1000'
-
-# Define your outputs here.
+  ent_name:
+    description: 'Name of the enterprise.'
+    required: true
+  file_path:
+    description: 'File path for the generated CSV.'
+    required: true
 outputs:
-  time:
-    description: 'Your output description here'
-
+  csv_path:
+    description: 'Full path to the generated CSV file.'
 runs:
-  using: node20
-  main: dist/index.js
+  using: 'node20'
+  main: 'dist/index.js'
