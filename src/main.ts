@@ -25,6 +25,7 @@ export async function run(): Promise<void> {
     }
 
     try {
+      console.log(response.data)
       const csv = Papa.unparse(response.data)
       fs.writeFileSync(filePath, csv)
 
