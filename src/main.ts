@@ -76,6 +76,7 @@ async function getUsage(pageNo: number) {
 
 // Extract Copilot usage data with a pagination of 50 records per page
 export async function run() {
+  console.trace('TRACE')
   let addTitleRow = true
   let pageNo = 1
   let remainingRecs = 0

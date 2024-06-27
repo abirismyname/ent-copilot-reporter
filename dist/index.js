@@ -36474,6 +36474,7 @@ async function getUsage(pageNo) {
 }
 // Extract Copilot usage data with a pagination of 50 records per page
 async function run() {
+    console.trace('TRACE');
     let addTitleRow = true;
     let pageNo = 1;
     let remainingRecs = 0;
@@ -38473,6 +38474,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
  */
 const main_1 = __nccwpck_require__(399);
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
+console.log('Running the action...');
 (0, main_1.run)();
 
 })();
