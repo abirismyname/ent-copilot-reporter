@@ -1,8 +1,8 @@
 name: 'Generate CSV Report'
 description: 'Generates a CSV report from GitHub API data.'
 inputs:
-  token:
-    description: 'GitHub token for authentication.'
+  GITHUB_TOKEN:
+    description: 'GitHub token'
     required: true
   ent_name:
     description: 'Name of the enterprise.'
