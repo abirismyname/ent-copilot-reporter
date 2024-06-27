@@ -36472,8 +36472,14 @@ async function getUsage(pageNo) {
         }
     }
 }
+let isRunCalled = false;
 // Extract Copilot usage data with a pagination of 50 records per page
 async function run() {
+    if (isRunCalled) {
+        console.log('run function is already called.');
+        return;
+    }
+    isRunCalled = true;
     console.trace('TRACE');
     let addTitleRow = true;
     let pageNo = 1;
