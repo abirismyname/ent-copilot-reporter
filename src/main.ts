@@ -53,7 +53,7 @@ const fields = [
 // Copilot User Management API call
 async function getUsage(pageNo: number) {
   try {
-    console.log(`Page: ${pageNo}`)
+    console.log(`getUsage Page: ${pageNo}`)
     return await octokit.request(
       'GET /enterprises/{ent}/copilot/billing/seats',
       {
@@ -135,7 +135,7 @@ export async function run() {
         pageNo = pageNo + 1
         addTitleRow = false
       }
-      console.log(`Page: ${pageNo}`)
+      console.log(`new Page: ${pageNo}`)
     } while (remainingRecs > 0)
   } catch (error: unknown) {
     if (error instanceof Error) {
