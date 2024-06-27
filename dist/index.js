@@ -36491,41 +36491,37 @@ async function run() {
             const seatsData = usageResult.data.seats;
             if (addTitleRow) {
                 totalSeats = usageResult.data.total_seats;
-                console.log(`Seat Count ${totalSeats}`);
+                console.log(`Total Seat Count ${totalSeats}`);
                 remainingRecs = totalSeats;
             }
-            // check whether the file extension is csv or not
-            if (file_path.endsWith('.csv')) {
-                // ALERT! - create our updated opts
-                const opts = { fields, header: addTitleRow };
-                // append to the existing file (or create and append if needed)
-                fs.appendFileSync(file_path, `${(0, json2csv_1.parse)(seatsData, opts)}\n`);
+            // ALERT! - create our updated opts
+            const opts = { fields, header: addTitleRow };
+            // append to the existing file (or create and append if needed)
+            fs.appendFileSync(file_path, `${(0, json2csv_1.parse)(seatsData, opts)}\n`);
+            // Export to JSON file
+            // check the file exists or not
+            const json_file_path = file_path.replace('.csv', '.json');
+            if (!fs.existsSync(json_file_path)) {
+                // The file doesn't exist, create a new one with an empty JSON object
+                fs.writeFileSync(json_file_path, JSON.stringify([], null, 2));
+            }
+            // check the file is empty or not
+            const data = fs.readFileSync(json_file_path, 'utf8'); // read the file
+            // file contains only [] indicating a blank file
+            // append the entire data to the file
+            if (data.trim() === '[]') {
+                console.log('The JSON data array is empty.');
+                fs.writeFileSync(json_file_path, JSON.stringify(seatsData, null, 2));
             }
             else {
-                // Export to JSON file
-                // check the file exists or not
-                if (!fs.existsSync(file_path)) {
-                    // The file doesn't exist, create a new one with an empty JSON object
-                    fs.writeFileSync(file_path, JSON.stringify([], null, 2));
-                }
-                // check the file is empty or not
-                const data = fs.readFileSync(file_path, 'utf8'); // read the file
-                // file contains only [] indicating a blank file
-                // append the entire data to the file
-                if (data.trim() === '[]') {
-                    console.log('The JSON data array is empty.');
-                    fs.writeFileSync(file_path, JSON.stringify(seatsData, null, 2));
-                }
-                else {
-                    // TODO: find the delta and append to existing file
-                    let jsonData = JSON.parse(data); // parse the JSON data into a JavaScript array
-                    jsonData = jsonData.concat(seatsData);
-                    fs.writeFileSync(file_path, JSON.stringify(jsonData, null, 2));
-                }
+                // TODO: find the delta and append to existing file
+                let jsonData = JSON.parse(data); // parse the JSON data into a JavaScript array
+                jsonData = jsonData.concat(seatsData);
+                fs.writeFileSync(json_file_path, JSON.stringify(jsonData, null, 2));
             }
             // pagination to get next page data
             remainingRecs = remainingRecs - seatsData.length;
-            console.log(`Seat Count ${remainingRecs}`);
+            console.log(`Seat Count Remaining ${remainingRecs}`);
             if (remainingRecs > 0) {
                 pageNo = pageNo + 1;
                 addTitleRow = false;
@@ -36542,8 +36538,6 @@ async function run() {
         }
     }
 }
-console.log(`preamble: ent name: ${ent_name} `);
-console.log(`preamble: file_path: ${file_path} `);
 // run the action code
 run();
 
