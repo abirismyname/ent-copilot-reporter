@@ -36453,6 +36453,7 @@ const fields = [
 // Copilot User Management API call
 async function getUsage(pageNo) {
     try {
+        console.trace('getUsage stack trace');
         console.log(`getUsage Page: ${pageNo}`);
         return await octokit.request('GET /enterprises/{ent}/copilot/billing/seats', {
             ent: ent_name,
