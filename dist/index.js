@@ -36453,7 +36453,7 @@ const fields = [
 // Copilot User Management API call
 async function getUsage(pageNo) {
     try {
-        return await octokit.request('GET /enterprise/{ent}/copilot/billing/seats', {
+        return await octokit.request('GET /enterprises/{ent}/copilot/billing/seats', {
             ent: ent_name,
             page: pageNo,
             headers: {
@@ -36543,7 +36543,7 @@ async function run() {
     }
 }
 console.log(`preamble: ent name: ${ent_name} `);
-console.log(`preamble: ent name: ${file_path} `);
+console.log(`preamble: file_path: ${file_path} `);
 // run the action code
 run();
 

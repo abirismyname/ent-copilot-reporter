@@ -54,7 +54,7 @@ const fields = [
 async function getUsage(pageNo: number) {
   try {
     return await octokit.request(
-      'GET /enterprise/{ent}/copilot/billing/seats',
+      'GET /enterprises/{ent}/copilot/billing/seats',
       {
         ent: ent_name,
         page: pageNo,
@@ -147,7 +147,7 @@ export async function run() {
 }
 
 console.log(`preamble: ent name: ${ent_name} `)
-console.log(`preamble: ent name: ${file_path} `)
+console.log(`preamble: file_path: ${file_path} `)
 
 // run the action code
 run()
