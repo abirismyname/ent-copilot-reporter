@@ -36435,7 +36435,15 @@ async function getUsage() {
     try {
         const seatsData = [];
         for await (const response of octokit.paginate.iterator(endpoint, parameters)) {
-            seatsData.push(...response.data);
+            // Check if response.data is iterable
+            if (Array.isArray(response.data)) {
+                seatsData.push(...response.data);
+            }
+            else {
+                // Handle the case where response.data is not iterable
+                // For example, push response.data directly if it's an object you want to include
+                console.error('response.data is not iterable', response.data);
+            }
         }
         return seatsData;
     }
