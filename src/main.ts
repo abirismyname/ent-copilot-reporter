@@ -88,6 +88,7 @@ export async function run() {
     do {
       // invoke the graphql query execution
       const usageResult = await getUsage(pageNo)
+      console.log(`usageResult ${usageResult}`)
       if (!usageResult) return
       const seatsData = usageResult.data.seats
 
@@ -146,6 +147,7 @@ export async function run() {
 }
 
 console.log(`preamble: ent name: ${ent_name} `)
+console.log(`preamble: ent name: ${file_path} `)
 
 // run the action code
 run()
