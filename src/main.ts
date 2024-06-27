@@ -59,13 +59,6 @@ async function getUsage() {
 }
 
 export async function run() {
-  if (isRunCalled) {
-    console.log('run function is already called.')
-    return
-  }
-
-  isRunCalled = true
-  console.log('TRACE')
 
   try {
     await makeDir(dirname(file_path))
