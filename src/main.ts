@@ -88,55 +88,58 @@ export async function run() {
       fs.unlinkSync(file_path)
     }
     do {
-      // invoke the graphql query execution
-      const usageResult = await getUsage(pageNo)
-      console.log(`usageResult ${usageResult?.data.seats.length}`)
-      if (!usageResult) return
-      const seatsData = usageResult.data.seats
+      await getUsage(pageNo).then(usageResult => {
+        // if usageResult is null, then exit the loop
+        if (usageResult == null) {
+          return
+        }
 
-      if (addTitleRow) {
-        totalSeats = usageResult.data.total_seats
-        console.log(`Total Seat Count ${totalSeats}`)
-        remainingRecs = totalSeats
-      }
+        const seatsData = usageResult.data.seats
 
-      // ALERT! - create our updated opts
-      const opts = { fields, header: addTitleRow }
+        if (addTitleRow) {
+          totalSeats = usageResult.data.total_seats
+          console.log(`Seat Count ${totalSeats}`)
+          remainingRecs = totalSeats
+        }
 
-      // append to the existing file (or create and append if needed)
-      fs.appendFileSync(file_path, `${parse(seatsData, opts)}\n`)
+        // check whether the file extension is csv or not
+        if (file_path.endsWith('.csv')) {
+          // ALERT! - create our updated opts
+          const opts = { fields, header: addTitleRow }
 
-      // Export to JSON file
-      // check the file exists or not
-      const json_file_path: string = file_path.replace('.csv', '.json')
-      if (!fs.existsSync(json_file_path)) {
-        // The file doesn't exist, create a new one with an empty JSON object
-        fs.writeFileSync(json_file_path, JSON.stringify([], null, 2))
-      }
+          // append to the existing file (or create and append if needed)
+          fs.appendFileSync(file_path, `${parse(seatsData, opts)}\n`)
+        } else {
+          // Export to JSON file
+          //check the file exists or not
+          if (!fs.existsSync(file_path)) {
+            // The file doesn't exist, create a new one with an empty JSON object
+            fs.writeFileSync(file_path, JSON.stringify([], null, 2))
+          }
 
-      // check the file is empty or not
-      const data = fs.readFileSync(json_file_path, 'utf8') // read the file
+          //check the file is empty or not
+          const data = fs.readFileSync(file_path, 'utf8') // read the file
 
-      // file contains only [] indicating a blank file
-      // append the entire data to the file
-      if (data.trim() === '[]') {
-        console.log('The JSON data array is empty.')
-        fs.writeFileSync(json_file_path, JSON.stringify(seatsData, null, 2))
-      } else {
-        // TODO: find the delta and append to existing file
-        let jsonData = JSON.parse(data) // parse the JSON data into a JavaScript array
-        jsonData = jsonData.concat(seatsData)
-        fs.writeFileSync(json_file_path, JSON.stringify(jsonData, null, 2))
-      }
-      // pagination to get next page data
-      remainingRecs = remainingRecs - seatsData.length
-      console.log(`Seat Count Remaining ${remainingRecs}`)
-      if (remainingRecs > 0) {
-        console.log(`${remainingRecs} greater than zero`)
-        pageNo = pageNo + 1
-        addTitleRow = false
-      }
-      console.log(`new Page: ${pageNo}`)
+          // file contains only [] indicating a blank file
+          // append the entire data to the file
+          if (data.trim() === '[]') {
+            console.log('The JSON data array is empty.')
+            fs.writeFileSync(file_path, JSON.stringify(seatsData, null, 2))
+          } else {
+            //TODO: find the delta and append to existung file
+            let jsonData = JSON.parse(data) // parse the JSON data into a JavaScript array
+            jsonData = jsonData.concat(seatsData)
+            fs.writeFileSync(file_path, JSON.stringify(jsonData, null, 2))
+          }
+        }
+        // pagination to get next page data
+        remainingRecs = remainingRecs - seatsData.length
+        console.log(`Remaining Records ${remainingRecs}`)
+        if (remainingRecs > 0) {
+          pageNo = pageNo + 1
+          addTitleRow = false
+        }
+      })
     } while (remainingRecs > 0)
   } catch (error: unknown) {
     if (error instanceof Error) {
