@@ -40,13 +40,11 @@ async function getUsage() {
       parameters
     )) {
       // Check if response.data is iterable
-      //if (Array.isArray(response.data)) {
-      seatsData.push(...response.data)
-      //} else {
-      // Handle the case where response.data is not iterable
-      // For example, push response.data directly if it's an object you want to include
-      console.error('response.data is not iterable', response.data)
-      //}
+      if (Array.isArray(response.data)) {
+        seatsData.push(...response.data)
+      } else {
+        seatsData.push(response.data)
+      }
     }
     return seatsData
   } catch (error) {
@@ -59,6 +57,13 @@ async function getUsage() {
 }
 
 export async function run() {
+  if (isRunCalled) {
+    console.log('run function is already called.')
+    return
+  }
+
+  isRunCalled = true
+  console.log('TRACE')
 
   try {
     await makeDir(dirname(file_path))
