@@ -53,6 +53,7 @@ const fields = [
 // Copilot User Management API call
 async function getUsage(pageNo: number) {
   try {
+    console.log(`Page: ${pageNo}`)
     return await octokit.request(
       'GET /enterprises/{ent}/copilot/billing/seats',
       {
@@ -88,7 +89,7 @@ export async function run() {
     do {
       // invoke the graphql query execution
       const usageResult = await getUsage(pageNo)
-      console.log(`usageResult ${usageResult}`)
+      console.log(`usageResult ${usageResult?.data.seats.length}`)
       if (!usageResult) return
       const seatsData = usageResult.data.seats
 
@@ -130,9 +131,11 @@ export async function run() {
       remainingRecs = remainingRecs - seatsData.length
       console.log(`Seat Count Remaining ${remainingRecs}`)
       if (remainingRecs > 0) {
+        console.log(`${remainingRecs} greater than zero`)
         pageNo = pageNo + 1
         addTitleRow = false
       }
+      console.log(`Page: ${pageNo}`)
     } while (remainingRecs > 0)
   } catch (error: unknown) {
     if (error instanceof Error) {
