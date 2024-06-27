@@ -36454,8 +36454,9 @@ const fields = [
 async function getUsage(pageNo) {
     try {
         console.log(`getUsage Page: ${pageNo}`);
-        return await octokit.request('GET /enterprises/{ent}/copilot/billing/seats', {
+        return await octokit.request('GET /enterprises/{ent}/copilot/billing/seats?page=${pageNo}', {
             ent: ent_name,
+            per_page: 100,
             page: pageNo,
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
@@ -36480,7 +36481,7 @@ async function run() {
         return;
     }
     isRunCalled = true;
-    console.trace('TRACE');
+    console.log('TRACE');
     let addTitleRow = true;
     let pageNo = 1;
     let remainingRecs = 0;
@@ -36533,9 +36534,10 @@ async function run() {
                 }
                 // pagination to get next page data
                 remainingRecs = remainingRecs - seatsData.length;
-                console.log(`Remaining Records ${remainingRecs}`);
+                //console.log(`Remaining Records ${remainingRecs}`)
                 if (remainingRecs > 0) {
                     pageNo = pageNo + 1;
+                    console.log(`Not finished yet!`);
                     addTitleRow = false;
                 }
             });
