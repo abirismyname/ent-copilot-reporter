@@ -76,10 +76,10 @@
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
     "@types/json2csv": "^5.0.7",
-    "@types/node": "^20.14.8",
+    "@types/node": "^20.14.10",
     "@types/papaparse": "^5.3.14",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.14.1",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
     "@vercel/ncc": "^0.38.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -92,6 +92,6 @@
     "prettier": "^3.3.2",
     "prettier-eslint": "^16.3.0",
     "ts-jest": "^29.1.5",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   }
 }
